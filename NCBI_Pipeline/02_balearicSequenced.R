@@ -6,15 +6,18 @@
 # Last update: 2023 - 05 - 10         #
 #######################################
 
+# This script allow us to extract genetic information obtained from species 
+# sequenced in the Balearic Islands.
+
 # Libraries
 library(data.table)
 library(dplyr)
 library(openxlsx)
 library(taxize)
 
-#------------------------------------------------------#
-# The firs part is useful if we have one sequence file #
-#------------------------------------------------------#
+#--------------------------------------------------#
+# The firs part is useful if we have one .csv file #
+#--------------------------------------------------#
 
 # set working directory
 setwd("/Users/tcanc/Library/CloudStorage/OneDrive-UniversitatdelesIllesBalears/CBB objectives/GeneticData")
