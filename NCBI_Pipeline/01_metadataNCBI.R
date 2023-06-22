@@ -1,12 +1,13 @@
-######################################
-# Title: NCBI download data          #
-# Author: Tommaso Cancellario        #
-# Reviewer: Laura Triginer           #
-# Creation: 2023 - 04 - 26           #
-# Last update: 2023 - 04 - 26        #
-######################################
+#########################################
+# Title: Create .csv from NCBI metadata #
+# Author: Tommaso Cancellario           #
+# Reviewer: Laura Triginer              #
+# Creation: 2023 - 06 - 15              #
+# Last update: 2023 - 06 - 15           #
+#########################################
 
-# ESTO noche
+# Whit this script you can create a .csv with sequence metadata. 
+# You can extract the metadata from the GenBank(full) file downloaded from NCBI.
 
 # More info about rentrez package:
 # https://cran.r-project.org/web/packages/rentrez/vignettes/rentrez_tutorial.html
@@ -16,19 +17,25 @@ library(rentrez)
 library(stringr)
 library(seqinr)
 library(dplyr)
+library(data.table)
+
 # Set WD
 setwd("./Desktop/TEST/")
 
+# Load the downloaded .txt file containing the metadata.
+lines <- readLines("./BalearicSequences_2023-06-09_removed.txt")
 
-file_path <- "./BalearicSequences_2023-06-09_removed.txt"
-# lines <- readLines(file_path, n = 1600)
-lines <- readLines(file_path)
+# If you want to load only part of your file you can use this line. n is the
+# number of rows to upload.
+# lines <- readLines("./BalearicSequences_2023-06-09_removed.txt", n = 1600)
 
+# Convert to tibble df.
 df <- tibble(text = lines)
-# head(df)
-# Identify empty rows
+
+# Identify empty rows.
 empty_rows <- which(df$text == "")
 
+# Create chunk for each NCBI record.
 recs.ls <- lapply(seq_along(empty_rows), function(i) {
   if (i == 1) {
     chunk_rows <- 1:(empty_rows[i] - 1)
@@ -38,10 +45,13 @@ recs.ls <- lapply(seq_along(empty_rows), function(i) {
   return(list(text = paste(df$text[chunk_rows], collapse = "\n")))
 })
 
+
+# Df containing the final information
 ncbiInfo <- data.frame()
 
+# Temporary df to store metadata information
 ncbi.2 <- as.data.frame(matrix(NA, ncol=13))
-colnames(ncbi.2) <- c("sampleid", "species_name","country",
+colnames(ncbi.2) <- c("sampleid", "species_name","country", "isolate",
                       "lat", "lon", "markercode", "nucleotides_bp",
                       "definition", "voucher", "pubmed", "collection_date",
                       "INV", "authors")
@@ -64,6 +74,11 @@ for(j in 1:length(recs.ls)){
   
   ncbi.2$country <- as.character(ifelse(grepl("country", gbank),
                                         gsub('\\s+', ' ', gsub('\n', '', gsub('country="|"$', '', regmatches(gbank, regexpr('country="([^"]+)"', gbank))))),
+                                        NA))
+  
+  # ISOLATE
+  ncbi.2$isolate <- as.character(ifelse(grepl("isolate", gbank),
+                                        gsub('\\s+', ' ', gsub('\n', '', gsub('isolate="|"$', '', regmatches(gbank, regexpr('isolate="([^"]+)"', gbank))))),
                                         NA))
   # LONGITUDE & LATITUDE
   if(isTRUE(grepl("lat_lon", gbank))) {
@@ -146,5 +161,8 @@ for(j in 1:length(recs.ls)){
   
 }
 
+# Save .csv
+write.csv(ncbiInfo, "./GeneticData/balearicSequences_2023_06_19.csv", row.names = FALSE)
 
-write.csv(ncbiInfo, "./GeneticData/balearicSequences_1_31.csv", row.names = FALSE)
+
+
