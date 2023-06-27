@@ -21,6 +21,7 @@ library(taxize)
 
 # set working directory
 setwd("/Users/tcanc/Library/CloudStorage/OneDrive-UniversitatdelesIllesBalears/CBB objectives/GeneticData")
+setwd("~/OneDrive/CBB objectives/GeneticData/")
 
 # Load .csv with all the metadata (this .csv is the result obtained from the script 01_metadataNCBI.R)
 seq <- fread("./balearicSequences_2023_06_19.csv")
@@ -30,54 +31,46 @@ seq$countryMerged <- ifelse(is.na(seq$country), seq$isolate, seq$country)
 head(seq)
 
 # We create a filte-pattern (this is the same string that we used for searching in NCBI)
-myPattern <- paste0("Balearic", "|", 
-                    "Balears", "|", 
-                    "Baleares", "|", 
-                    "Minorca", "|", 
-                    "Mallorca", "|",
-                    "Majorca", "|",
-                    "Maiorca", "|",
-                    "Mayorca", "|",
-                    "Menorca", "|",
-                    "Cabrera", "|",
-                    "Dragonera", "|",
-                    "Ibiza", "|",
-                    "Eivissa", "|",
-                    "Formentera")
+myPattern <- c("Balearic", "Balears", "Baleares", "Minorca", "Mallorca", "Majorca", "Maiorca",
+"Mayorca", "Menorca", "Cabrera", "Dragonera", "Ibiza", "Eivissa", "Formentera")
+
+myPattern <- c(myPattern, tolower(myPattern), toupper(myPattern))
+
+myPattern <- paste0(myPattern, collapse = "|")
 
 # Filter the data set
 balearicSeq <- seq[grep(myPattern, seq$countryMerged), ]
 head(balearicSeq)
 
-
-# Save xlsx
+# Save .xlsx
 header_style <- createStyle(halign = "center", textDecoration = "bold")
 
 wb <- createWorkbook()
-addWorksheet(wb, "balearicNcbi_2023_06_19") # add Worksheet
-writeData(wb, "balearicNcbi_2023_06_19", balearicSeq) # Add data in the Worksheet
+addWorksheet(wb, "balearicNcbi_2023_06_26") # add Worksheet sequencesì
+writeData(wb, "balearicNcbi_2023_06_26", balearicSeq) # Add data in the Worksheet
 
-saveWorkbook(wb, file = "./balearicSequences_2023_06_20.xlsx", overwrite = TRUE)
+saveWorkbook(wb, file = "./balearicSequences_2023_06_26.xlsx", overwrite = TRUE)
 
-#write.csv(country, "./countries_2023-06-19.csv", row.names = FALSE)
 # ---------------------------------------------------------------------------- #
 
 # Check sheet name
-getSheetNames("./balearicSequences_2023_06_20.xlsx")
+getSheetNames("./balearicSequences_2023_06_26.xlsx")
 
 # Load xlsx
-balearicSeq <- read.xlsx("./balearicSequences_2023_06_20.xlsx", sheet = "balearicNcbi_2023_06_19")
+balearicSeq <- read.xlsx(xlsxFile = "./balearicSequences_2023_06_26.xlsx", 
+                         sheet = "balearicNcbi_2023_06_26")
 head(balearicSeq)
 
 # Create a unique list of species
 sp <- unique(balearicSeq$species_name)
 
-
+# Create empty df to save results
 taxonomyNCBI <- data.frame()
 
-
-length(sp)
-for(i in 1:40){
+# For cycle to retrive higer taxonomy
+for(i in 1325:length(sp)){
+  
+  Sys.sleep(2)
   
   # Search name in NCBI database
   x <- classification(sp[i], db = "ncbi")
@@ -122,8 +115,12 @@ for(i in 1:40){
   
 }
 rm(i, x, taxonomyNcbi.1)
-  
-  
+
+wb <- loadWorkbook("./balearicSequences_2023_06_22.xlsx")
+addWorksheet(wb, "balearicTaxonomy_2023_06_22") # add Worksheet
+writeData(wb, "balearicTaxonomy_2023_06_22", taxonomyNCBI) # Add data in the Worksheet
+
+saveWorkbook(wb, file = "./balearicSequences_2023_06_22.xlsx", overwrite = TRUE)
 
 
 
