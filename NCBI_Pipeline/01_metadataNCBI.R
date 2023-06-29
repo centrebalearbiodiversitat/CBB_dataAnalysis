@@ -23,7 +23,8 @@ library(data.table)
 setwd("./Desktop/TEST/")
 
 # Load the downloaded .txt file containing the metadata.
-# write("", file = "./1_Helosciadium_bermejoi_removed.txt", append = TRUE)
+# Add a empty line at the end of the file. Somtime we have to use this trick.
+# write("", file = "./1_Helosciadium_bermejoi_removed.txt", append = TRUE) 
 lines <- readLines("./BalearicSequences_2023-06-09_removed.txt")
 
 # If you want to load only part of your file you can use this line. n is the
