@@ -23,6 +23,7 @@ library(data.table)
 setwd("./Desktop/TEST/")
 
 # Load the downloaded .txt file containing the metadata.
+# write("", file = "./1_Helosciadium_bermejoi_removed.txt", append = TRUE)
 lines <- readLines("./BalearicSequences_2023-06-09_removed.txt")
 
 # If you want to load only part of your file you can use this line. n is the
@@ -35,6 +36,7 @@ df <- tibble(text = lines)
 # Identify empty rows.
 empty_rows <- which(df$text == "")
 
+
 # Create chunk for each NCBI record.
 recs.ls <- lapply(seq_along(empty_rows), function(i) {
   if (i == 1) {
@@ -45,12 +47,11 @@ recs.ls <- lapply(seq_along(empty_rows), function(i) {
   return(list(text = paste(df$text[chunk_rows], collapse = "\n")))
 })
 
-
 # Df containing the final information
 ncbiInfo <- data.frame()
 
 # Temporary df to store metadata information
-ncbi.2 <- as.data.frame(matrix(NA, ncol=13))
+ncbi.2 <- as.data.frame(matrix(NA, ncol=14))
 colnames(ncbi.2) <- c("sampleid", "species_name","country", "isolate",
                       "lat", "lon", "markercode", "nucleotides_bp",
                       "definition", "voucher", "pubmed", "collection_date",
