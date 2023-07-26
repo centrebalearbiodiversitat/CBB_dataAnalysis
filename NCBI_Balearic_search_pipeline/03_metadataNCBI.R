@@ -1,6 +1,6 @@
 #########################################
 # Title: Create .csv from NCBI metadata #
-# Author: Tommaso Cancellario           #
+# Author: Tommaso Cancellario  & Claudio  Padua         #
 # Reviewer: Laura Triginer              #
 # Creation: 2023 - 06 - 15              #
 # Last update: 2023 - 06 - 15           #
@@ -20,12 +20,12 @@ library(dplyr)
 library(data.table)
 
 # Set WD
-setwd("./Desktop/TEST/")
+setwd("./Desktop/TEST1/")
 
 # Load the downloaded .txt file containing the metadata.
 # Add a empty line at the end of the file. Somtime we have to use this trick.
-# write("", file = "./1_Helosciadium_bermejoi_removed.txt", append = TRUE) 
-lines <- readLines("./BalearicSequences_2023-06-09_removed.txt")
+write("", file = "./3_Syngnathus_abaster_removed.txt", append = TRUE) 
+lines <- readLines("./2_Helosciadium_bermejoi_removed.txt")
 
 # If you want to load only part of your file you can use this line. n is the
 # number of rows to upload.
@@ -164,7 +164,7 @@ for(j in 1:length(recs.ls)){
 }
 
 # Save .csv
-write.csv(ncbiInfo, "./GeneticData/balearicSequences_2023_06_19.csv", row.names = FALSE)
+write.csv(ncbiInfo, "./2_Helosciadium_bermejoi_removed.csv", row.names = FALSE)
 
 
 
