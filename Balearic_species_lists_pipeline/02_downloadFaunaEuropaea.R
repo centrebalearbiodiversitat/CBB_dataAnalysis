@@ -152,7 +152,7 @@ for(i in 1:length(gen)) {
       
       # If the genus count more than 25 scientific names we need to scrape also the other pages.
       #simple.1 <- read_html(paste0("https://fauna-eu.org", nPages[j]))
-      simple.1 <- read_html(paste0("https://fauna-eu.org/cdm_dataportal/search/results/taxon?ws=portal/taxon/find&query=Leuctra&form_build_id=form-yCUOMbyaOrUypUfzCmfYy_S4qRO0OaqCMcOThvnkGJY&form_id=cdm_dataportal_search_taxon_form&search%5BdoTaxaByCommonNames%5D=&search%5BdoSynonyms%5D=&search%5BdoTaxa%5D=1&search%5BpageSize%5D=25&search%5BpageNumber%5D=0&pager%5BpageNumber%5D=", pages[j]))
+      simple.1 <- read_html(paste0("https://fauna-eu.org/cdm_dataportal/search/results/taxon?ws=portal/taxon/find&query=", gen[i], "&form_build_id=form-yCUOMbyaOrUypUfzCmfYy_S4qRO0OaqCMcOThvnkGJY&form_id=cdm_dataportal_search_taxon_form&search%5BdoTaxaByCommonNames%5D=&search%5BdoSynonyms%5D=&search%5BdoTaxa%5D=1&search%5BpageSize%5D=25&search%5BpageNumber%5D=0&pager%5BpageNumber%5D=", pages[j]))
       body.1 <- html_nodes(simple.1, "body") 
       gen.ls.1 <- html_nodes(body.1, ".Taxon")
       
