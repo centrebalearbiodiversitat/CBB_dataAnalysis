@@ -8,7 +8,7 @@
 #############################################################
 
 # Load libraries
-pacman::p_load(robis, sf, worrms, rvest)
+pacman::p_load(robis, sf, worrms, rvest, tidyverse)
 
 # Set wd
 setwd("~/OneDrive - Universitat de les Illes Balears/")
@@ -18,12 +18,14 @@ balearicSea <- st_read("CBB objectives/CBB_Balearic_Sea/CBBBalearicSea_NO_island
 balearicSea <- st_set_crs(balearicSea, st_crs(4326))
 plot(balearicSea[1])
 
-
 # Load sp list.
-sp <- c("Asterina pancerii", "Diplodus cervinus",
-        "Carcharodon carcharias", "Dendropoma petraeum", "Tomjorge yves")
+species.list <- read.csv("/Users/tcanc/Desktop/Chaetognatha_GBIFChecked_2023-07-26.csv", sep = ";")
 
-gen <- c("Asterina", "Diplodus", "Carcharodon", "Dendropoma")
+# Species list
+sp <- unique(species.list$acceptedName)
+
+# Genus list
+gen <- unique(species.list$genus)
 
 
 # OBIS occurrence download.
@@ -56,7 +58,7 @@ for(i in 1:length(sp)){
     } else {
       
       intersection_result <- data.frame(originalName = sp[i],
-                                        scientificName = NA,
+                                        scientificName = unique(x$scientificName),
                                         presenceAbsence = "absent")
       obisInfo <- rbind(obisInfo, intersection_result)
       
@@ -75,104 +77,56 @@ for(i in 1:length(sp)){
   print(paste(i, "---- of ----", length(sp)))
     
 }
+rm(sf_points, obisInfo.1, intersection_result, i, x)
 
+obisInfo$source <- "Original list"
+obisInfo <- obisInfo[!grepl("\\.", obisInfo$scientificName), ]
 
 #################
 # GENUS DERIVED #
 #################
 
-
 genObis <- data.frame()
-
-i=1
-
-# for(i in 1:length(gen)){
-# 
-#   
-#   key <- jsonlite::fromJSON(paste0("https://www.marinespecies.org/rest/AphiaIDByName/", gen[i],"?marine_only=true"))
-#   wChildren <- wm_children(id = key, marine_only = FALSE, offset = 1)
-#   wChildren <- wChildren[wChildren$rank == "Species" & 
-#                            wChildren$status ==  "accepted", ]%>% 
-#     select(scientificname) %>% 
-#     as.data.frame()
-#   
-#   genObis <- rbind(genObis, wChildren)
-#  
-#   print(paste(i, "---- of ----", length(gen)))
-#   
-# 
-#    
-# }
-
-
-# ------------------------------------------------------------------------------
-
-# Function to fetch data for a given offset and genus name
-fetch_worms_data <- function(genus, offset) {
-  url <- paste0("https://www.marinespecies.org/rest/AphiaIDByName/", genus, "?marine_only=true&offset=", 1)
-  data <- jsonlite::fromJSON(url)
-  return(data)
+for(i in 1:length(gen)){
+  
+  key <- jsonlite::fromJSON(paste0("https://www.marinespecies.org/rest/AphiaIDByName/", gen[i], "?marine_only=true&offset=", 1))
+  # Start with offset = 1
+  offset <- 1
+  tryCatch({
+    
+    repeat {
+      # Fetch data for the current offset and genus
+      # key <- fetch_worms_data(gen[i], offset)
+      data <-  wm_children(id = key, marine_only = FALSE, offset = offset)
+      
+      # Filter for Species with accepted status
+      data <- data[data$rank == "Species" & data$status == "accepted", ] %>%
+         select(scientificname)
+      
+      # Add the data to the taxa_list
+      genObis <- rbind(genObis, data)
+      
+      # Increment the offset for the next iteration
+      offset <- offset + 50
+    }
+    
+    
+    
+  }, error = function(e) {
+    # Handle the error without any specific action
+    # The loop will automatically continue to the next iteration
+  })  
+  
+  print(paste(i, "---- of ----", length(gen)))
+  
 }
+rm(key, offset, data)
 
-
-genus = c("Asterina", "Diplodus")
-
-
-i=2
-
-
-taxa_list <- data.frame()
-
-
-data <- jsonlite::fromJSON(paste0("https://www.marinespecies.org/rest/AphiaIDByName/", genus[i], "?marine_only=true&offset=", 1))
-# Start with offset = 1
-offset <- 1
-tryCatch({
-  
-  repeat {
-    # Fetch data for the current offset and genus
-    key <- fetch_worms_data(genus[i], offset)
-    data <-  wm_children(id = key, marine_only = FALSE, offset = offset)
-    
-    # Filter for Species with accepted status
-    # data <- data[data$rank == "Species" & data$status == "accepted", ] %>%
-    #   select(scientificname)
-    
-    # Add the data to the taxa_list
-    taxa_list <- rbind(taxa_list, data)
-    
-    # Increment the offset for the next iteration
-    offset <- offset + 50
-  }
-  
-}, error = function(e) {
-  # Handle the error without any specific action
-  # The loop will automatically continue to the next iteration
-})
-
-
-
-return(taxa_df)
-
-
-
-# Example usage for a genus (e.g., "Pseudoceros")
-genus <- "Pseudoceros"
-result <- download_taxa(genus)
-
-
-
-# ------------------------------------------------------------------------------
-
-
-
-
-
-
-##### Download genus derived presences
+# Convert genus column to vector
 genObis <- genObis$scientificname
 
-genObisInfo <- data.frame()
+# Download information from OBIS about genus derived taxa
+obisGenusInfo <- data.frame()
 for(i in 1:length(genObis)){
   
   x <- occurrence(scientificname = genObis[i]) 
@@ -181,11 +135,11 @@ for(i in 1:length(genObis)){
     
     x <- select(x, scientificName, decimalLatitude, decimalLongitude)
     
-    obisInfo.1 <- cbind(sp[i], x)
-    colnames(obisInfo.1)[1] <- "originalName"  
+    obisGenusInfo.1 <- cbind(genObis[i], x)
+    colnames(obisGenusInfo.1)[1] <- "originalName"  
     
     # Convert the dataframe to an sf object
-    sf_points <- st_as_sf(obisInfo.1, 
+    sf_points <- st_as_sf(obisGenusInfo.1, 
                           coords = c("decimalLongitude", "decimalLatitude"), 
                           crs = 4326)
     # Filter only the points
@@ -196,28 +150,51 @@ for(i in 1:length(genObis)){
     if(nrow(intersection_result) >= 5){
       
       intersection_result$presenceAbsence <- "present"
-      obisInfo <- rbind(genObisInfo, intersection_result[1,])
+      obisGenusInfo <- rbind(obisGenusInfo, intersection_result[1,])
       
     } else {
       
-      intersection_result <- data.frame(originalName = sp[i],
-                                        scientificName = NA,
+      intersection_result <- data.frame(originalName = genObis[i],
+                                        scientificName = unique(x$scientificName),
                                         presenceAbsence = "absent")
-      obisInfo <- rbind(genObisInfo, intersection_result)
+      obisGenusInfo <- rbind(obisGenusInfo, intersection_result)
       
     }
     
   } else {
     
-    intersection_result <- data.frame(originalName = sp[i],
+    intersection_result <- data.frame(originalName = genObis[i],
                                       scientificName = "not found",
                                       presenceAbsence = "not found")
     
-    obisInfo <- rbind(genObisInfo, intersection_result)
+    obisGenusInfo <- rbind(obisGenusInfo, intersection_result)
     
   }
   
   print(paste(i, "---- of ----", length(genObis)))
   
 }
+rm(sf_points, obisGenusInfo.1, intersection_result, i, x)
+
+obisGenusInfo$source <- "Genus derived"
+obisGenusInfo <- obisGenusInfo[!grepl("\\.", obisGenusInfo$scientificName), ]
+
+# Merge the two lists
+obisMerged <- merge(obisInfo, obisGenusInfo, by = "originalName", all = TRUE)
+
+obisMerged$scientificName.x <- ifelse(obisMerged$scientificName.x == "not found", obisMerged$originalName, obisMerged$scientificName.x)
+
+
+
+write.csv(obisMerged, paste0("./", grName, "_obisBalSea_", Sys.Date(),".csv"), row.names = FALSE)
+
+
+
+
+
+
+
+
+
+
 

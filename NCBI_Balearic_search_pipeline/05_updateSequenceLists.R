@@ -16,6 +16,7 @@ setwd("~/OneDrive - Universitat de les Illes Balears/CBB objectives/GeneticData/
 
 # Path where are stored the csv with sequence metadata
 csvPathOld <- "./data/originalNamesCSV"
+csvPathUpdate <- "~/Desktop/NCBI_Download/"
 
 # Path to save the new sequences .csv lists
 csvPathNew <- paste0("./data/originalNamesCSV/toAdd_", Sys.Date())
@@ -35,6 +36,44 @@ sp <- unique(thSP$acceptedName)
 # Load .csv path list and file name
 spOld.listFiles <- list.files(csvPathOld, full.names = TRUE, pattern = ".csv$") 
 spOld.nameFiles <- list.files(csvPathOld, pattern = ".csv$") 
+
+
+# .csv with the new data
+spUpdate.listFiles <- list.files(csvPathUpdate, full.names = TRUE, pattern = ".csv$") 
+spUpdate.nameFiles <- list.files(csvPathUpdate, pattern = ".csv$") 
+
+
+################################################################################
+
+# Dobbiamo ri-estrarre i metadati dai file vecchi perchè manca isolate
+
+
+i=22
+
+targetSpecies <- grep(sp[i], spOld.listFiles)
+targetSpeciesUpdate <- grep(gsub(" ", "_", sp[i]), spUpdate.listFiles)
+
+spOld <- read.csv(spOld.listFiles[targetSpecies]) 
+
+spUpdate <- read.csv(spUpdate.listFiles[targetSpeciesUpdate]) 
+
+difference.df <- anti_join(spUpdate, spOld, by = "sampleid")
+
+spUpdated <- rbind(spOld, spUpdate)
+
+
+colnames(spOld) == colnames(spUpdate)
+
+# I nuovi Id possonon essere aggiunti al file dei metadati finale
+
+
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+
+
 
 # Set NCBI reference database
 dataBase <- "nuccore"

@@ -59,7 +59,7 @@ for(i in 1:length(sp)){
   
   # List of occurrence in Balearic islands
   dat_ne <- occ_search(taxonKey = key, hasCoordinate = T, 
-                       geometry = balearic, limit = 199999)
+                       geometry = balearic, limit = 99999)
   nOccBal <- dat_ne$meta$count
   dat_ne <- dat_ne$data
   
@@ -209,7 +209,7 @@ for(i in 878:length(sp.gen)){
   
   # List of occurrence in Balearic islands
   dat_ne <- occ_search(taxonKey = key, hasCoordinate = T, 
-                       geometry = balearic, limit = 199999)
+                       geometry = balearic, limit = 99999)
   nOccBal <- dat_ne$meta$count
   dat_ne <- dat_ne$data
   

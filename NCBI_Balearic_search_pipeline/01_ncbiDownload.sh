@@ -4,7 +4,7 @@
 input_file="organisms.txt"
 
 # Output folder
-output_folder="TEST"
+output_folder="NCBI_Download"
 
 # Create the output folder if it doesn't exist
 # mkdir -p "$output_folder"
