@@ -1,4 +1,4 @@
-# Bentre Balear Biodiversitat - Data Analysis
+# Centre Balear Biodiversitat - Data Analysis
 
 - Species list pipeline
 - NCBI pipeline
