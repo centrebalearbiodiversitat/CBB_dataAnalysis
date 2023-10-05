@@ -1,5 +1,7 @@
 # rotifeR
-rotifeR shiny app
+CBB Taxonomy App
 
-<img src="https://github.com/TommasoCanc/rotifeR/blob/main/www/rotifeR.gif" height="240">
-<img src="https://github.com/TommasoCanc/rotifeR/blob/main/www/biomonitoR.png" height="240">
+<hr>
+
+<img src="https://github.com/centrebalearbiodiversitat/CBB_dataAnalysis/blob/main/logo-cbb.png" height="100">
+
