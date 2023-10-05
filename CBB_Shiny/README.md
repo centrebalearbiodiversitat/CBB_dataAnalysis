@@ -1,4 +1,4 @@
-# rotifeR
+# CBB Taxonomy App
 CBB Taxonomy App
 
 <hr>
