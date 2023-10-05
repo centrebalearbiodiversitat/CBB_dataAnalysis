@@ -1,20 +1,9 @@
-#--------------------------#
-# Shiny App Rotifers v 0.1 #
-#--------------------------#
+#-------------------------------#
+# Shiny App CBB Taxonomy v. 0.1 #
+#-------------------------------#
 
 # Load libraries
-pacman::p_load(jsonlite, shiny, shinyWidgets, tidyverse)
-
-
-# library(shiny)
-# library(leaflet)
-# library(dplyr)
-# library(htmltools)
-# library(ggplot2)
-# library(sf)
-# library(shinyWidgets)
-# library(biomonitoR)
-# library(mapview)
+pacman::p_load(DT, jsonlite, shiny, shinyWidgets, tidyverse)
 
 #----------#
 # Function ---------------------------------------------------------------------

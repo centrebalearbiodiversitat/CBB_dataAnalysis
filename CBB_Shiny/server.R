@@ -1,10 +1,6 @@
-#--------------------------#
-# Shiny App Rotifers v 0.1 #
-#--------------------------#
-
-# Reference Database
-# refDb <- read.csv("Rotifer_DB_trim.csv", sep = ",")
-# refbiomonitoR <- read.csv("Rotifer_DB_biomonitoR.csv", sep = ",")
+#-------------------------------#
+# Shiny App CBB Taxonomy v. 0.1 #
+#-------------------------------#
 
 # Function
 source("./function/cbbdbCol.R")
