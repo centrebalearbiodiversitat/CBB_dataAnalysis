@@ -1,4 +1,4 @@
-# X: vector of taxa
+# x: vector of taxa
 
 
 specifyTaxon <- function(x){
@@ -7,6 +7,7 @@ specifyTaxon <- function(x){
                   colStatus = data.frame()
   )
   
+  withProgress(message = "Downloading taxonomy", value = 0,
   for(i in 1:length(x)){
     
     sp.1 <- x[i]
@@ -34,7 +35,8 @@ specifyTaxon <- function(x){
                                Genus = "Not found",
                                Species = "Not found",
                                Subspecies = "Not found",
-                               originalStatus = "Not found") 
+                               originalStatus = "Not found",
+                               taxonRank = "Not Found") 
     } else {
       
       # Check name status
@@ -45,6 +47,14 @@ specifyTaxon <- function(x){
       
       # Named with more taxonomic status
       if(length(status) > 1) {
+        
+        if (unique(colStatus.1$colStatus == "accepted")) {
+          showNotification(paste("The taxon", sp.1, "has more then one accepted name"), 
+                           type = "error",
+                           duration = NULL)
+          # print("Houston, we have a problem...")
+          break
+        }
         
         classification <- as.data.frame(json$result$classification[which(json$result$usage$status == "accepted")])
         rank <- classification$rank[nrow(classification)]
@@ -62,7 +72,8 @@ specifyTaxon <- function(x){
                                  Genus = ch0_to_Na(classification$name[classification$rank == "genus"]),
                                  Species = ch0_to_Na(word(classification$name[classification$rank == "species"], -1)),
                                  Subspecies = ch0_to_Na(word(classification$name[classification$rank == "subspecies"], -1)),
-                                 originalStatus = json$result$usage[which(json$result$usage$status == "accepted"), ]$status) %>%
+                                 originalStatus = json$result$usage[which(json$result$usage$status == "accepted"), ]$status,
+                                 taxonRank = rank) %>%
           unique()
         
       } 
@@ -87,7 +98,8 @@ specifyTaxon <- function(x){
                                  Genus = ch0_to_Na(classification$name[classification$rank == "genus"]),
                                  Species = ch0_to_Na(word(classification$name[classification$rank == "species"], -1)),
                                  Subspecies = ch0_to_Na(word(classification$name[classification$rank == "subspecies"], -1)),
-                                 originalStatus = json$result$usage$status) %>%
+                                 originalStatus = json$result$usage$status,
+                                 taxonRank = rank) %>%
           unique()
         
       }
@@ -118,7 +130,8 @@ specifyTaxon <- function(x){
                                  Genus = ch0_to_Na(classification$name[classification$rank == "genus"]),
                                  Species = ch0_to_Na(word(classification$name[classification$rank == "species"], -1)),
                                  Subspecies = ch0_to_Na(word(classification$name[classification$rank == "subspecies"], -1)),
-                                 originalStatus = json$result$usage$status) %>%
+                                 originalStatus = json$result$usage$status,
+                                 taxonRank = rank) %>%
           unique()
         
       }
@@ -130,7 +143,11 @@ specifyTaxon <- function(x){
     
     print(paste(i, "---- of ----", length(x)))
     
+    # Increment the progress bar, and update the detail text.
+    incProgress(1/length(x), detail = paste("Doing:", i))
+    
   }
+  )
   
   return(colList)
   

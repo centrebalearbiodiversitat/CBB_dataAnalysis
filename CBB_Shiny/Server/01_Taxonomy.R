@@ -42,7 +42,7 @@ observeEvent(input$taxa.run.button,{
       
       spTaxa <- unique(stringr::str_trim(temp_df$df_data[,input$text.db], side = c("both")))
       
-      # Select function to retrive taxonomy in specify format
+      # Select function to retrieve taxonomy in specify format
       if(input$taxon.an == "Specify_COL") {
         temp_df.2$df_data <- specifyTaxon(spTaxa)
         temp_df.2$df_data <- temp_df.2$df_data$colNames
@@ -58,7 +58,7 @@ observeEvent(input$taxa.run.button,{
         tagList(
           h2("Taxonomy"),
           DT::dataTableOutput("dataTaxonomy")
-        )
+        ) %>% withSpinner()
       })
       
       output$downloadButton <- renderUI({

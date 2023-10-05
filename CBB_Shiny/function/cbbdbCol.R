@@ -4,6 +4,7 @@ cbbdbCol <- function(x){
   
   colNames <- data.frame()
   
+  withProgress(message = "Downloading taxonomy", value = 0,
   for(i in 1:length(x)){
     
     # Taxonomy source
@@ -58,7 +59,8 @@ cbbdbCol <- function(x){
                                subspeciesSource = taxonSource,
                                subspeciesOrigin = taxonOrigin,
                                habitat = "Not found",
-                               originalStatus = "Not found")
+                               originalStatus = "Not found",
+                               taxonRank = "Not Found")
     } else {
       
       # Check name status
@@ -66,6 +68,14 @@ cbbdbCol <- function(x){
       
       # Named with more taxonomic status
       if(length(status) > 1) {
+        
+        if (unique(colStatus.1$colStatus == "accepted")) {
+          showNotification(paste("The taxon", sp.1, "has more then one accepted name"), 
+                           type = "error",
+                           duration = NULL)
+          # print("Houston, we have a problem...")
+          break
+        }
         
         classification <- as.data.frame(json$result$classification[which(json$result$usage$status == "accepted")])
         rank <- classification$rank[nrow(classification)]
@@ -141,7 +151,8 @@ cbbdbCol <- function(x){
                                  subspeciesSource = taxonSource,
                                  subspeciesOrigin = taxonOrigin,
                                  habitat = habitat,
-                                 originalStatus = ifelse(any(status %in% "accepted"), "accepted", "Many status")) %>% 
+                                 originalStatus = ifelse(any(status %in% "accepted"), "accepted", "Many status"),
+                                 taxonRank = rank) %>% 
           unique()
         
         # any(): check if there are TRUE values in a string
@@ -225,7 +236,8 @@ cbbdbCol <- function(x){
                                  subspeciesSource = taxonSource,
                                  subspeciesOrigin = taxonOrigin,
                                  habitat = habitat,
-                                 originalStatus = status) %>% 
+                                 originalStatus = status,
+                                 taxonRank = rank) %>% 
           unique()
         
       }
@@ -316,7 +328,8 @@ cbbdbCol <- function(x){
                                  subspeciesSource = taxonSource,
                                  subspeciesOrigin = taxonOrigin,
                                  habitat = habitat,
-                                 originalStatus = status) %>% 
+                                 originalStatus = status,
+                                 taxonRank = rank) %>% 
           unique()
         
       }
@@ -325,9 +338,13 @@ cbbdbCol <- function(x){
     
     colNames <- rbind(colNames, colNames.1)
     
-    print(paste(i, "---- of ----", length(x)))
+    # print(paste(i, "---- of ----", length(x)))
+    
+    # Increment the progress bar, and update the detail text.
+    incProgress(1/length(x), detail = paste("Doing:", i))
     
   }
+  ) 
   
   return(colNames)
   

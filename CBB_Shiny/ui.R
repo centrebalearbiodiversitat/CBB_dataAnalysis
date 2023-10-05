@@ -3,7 +3,7 @@
 #-------------------------------#
 
 # Load libraries
-pacman::p_load(DT, jsonlite, shiny, shinyWidgets, tidyverse)
+pacman::p_load(DT, jsonlite, shiny, shinyWidgets, tidyverse, shinycssloaders)
 
 #----------#
 # Function ---------------------------------------------------------------------
