@@ -1,7 +1,7 @@
 # Input file containing species names
 
 # Dobbiamo aggiungere una liea vuota alla fine del file!!!!!!!!
-input_file="organisms.txt"
+input_file="NCBIDownload.txt"
 
 # Output folder
 output_folder="NCBI_Download"
@@ -25,9 +25,15 @@ while IFS= read -r line <&3; do
     # Construct the query string for the species
     query="${line}[Organism]"
 
+    # Print species name and counter
+    echo "---- Counter: " ${counter} "----" ${line}
+
     # Use esearch to retrieve the list of sequence IDs
     esearch -db nucleotide -query "$query" | \
       efetch -format gbwithparts > "${output_folder}/${counter}_${line// /_}.txt"
+
+    # Sleep time in seconds
+    sleep 5 
 
     # Increment the counter
     ((counter++))

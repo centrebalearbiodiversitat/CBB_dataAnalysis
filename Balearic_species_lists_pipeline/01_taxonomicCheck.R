@@ -15,7 +15,7 @@ setwd("/Users/tcanc/Desktop/")
 
 
 # Load species list
-species.list <- read.csv("./biomonitoR/AMBI/name.csv", sep = ";")
+species.list <- read.csv("./prueba.csv", sep = ";")
 head(species.list)
 
 sp <- unique(species.list$Taxa)
@@ -23,7 +23,7 @@ sp <- unique(species.list$Taxa)
 # Reference database: GBIF
 spCheck <- data.frame()
 
-for(i in 1:length(sp)){
+for(i in 1:10){
   
   tax_key <- name_backbone(sp[i])
   

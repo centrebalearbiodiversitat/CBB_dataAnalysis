@@ -24,13 +24,23 @@ fileList <- list.files("./", full.names = TRUE, pattern = "removed.txt")
 fileName <- list.files("./", pattern = "removed.txt")
 fileName <- sub("_removed.txt", "", fileName)
 
-
-for (i in 1:length(fileList)) {
+for (i in 1:length(fileName)) {
   
   # Load the downloaded .txt file containing the metadata.
-  # Add a empty line at the end of the file. Somtime we have to use this trick.
-  write("", file = fileList[i], append = TRUE) 
   lines <- readLines(fileList[i])
+  
+  
+  # Check if there is more than one empty line at the end of the text
+  if(length(lines) > 0 && lines[length(lines)] == ""){
+    
+    lines <- lines
+    
+  } else {
+    # Add a empty line at the end of the file.
+    write("", file = fileList[i], append = TRUE) 
+    lines <- readLines(fileList[i])
+    
+  }
   
   # If you want to load only part of your file you can use this line. n is the
   # number of rows to upload.
@@ -56,11 +66,11 @@ for (i in 1:length(fileList)) {
   ncbiInfo <- data.frame()
   
   # Temporary df to store metadata information
-  ncbi.2 <- as.data.frame(matrix(NA, ncol=14))
+  ncbi.2 <- as.data.frame(matrix(NA, ncol=16))
   colnames(ncbi.2) <- c("sampleid", "species_name","country", "isolate",
                         "lat", "lon", "markercode", "nucleotides_bp",
                         "definition", "voucher", "pubmed", "collection_date",
-                        "INV", "authors")
+                        "INV", "authors", "journal", "institution")
   
   for(j in 1:length(recs.ls)){
     
@@ -103,9 +113,6 @@ for (i in 1:length(fileList)) {
     }
     
     # MARKER CODE
-    # ncbi.2$markercode <- ifelse(grepl("product=", gbank) == T,
-    #                             gsub("\"", "", gsub("^.*product=\\s*|\\s*\n.*$", "", gbank)), NA)
-    
     ncbi.2$markercode <- ifelse(grepl("product=", gbank), 
                                 paste(unlist(regmatches(gbank, gregexpr('(?<=/product=").*?(?=")', gbank, perl = TRUE))), collapse = ";"), 
                                 NA)
@@ -153,13 +160,41 @@ for (i in 1:length(fileList)) {
                               paste(gsub("\\s+", " ", gsub("\\s+TITLE.*", "", str_extract_all(gbank, "(?<=AUTHORS\\s{3})[^\n]+\\n[^\n]+")[[1]])), collapse =";"),
                               authorExtract)
       
-      
-      
       ncbi.2$authors <- authorExtract
       
     } else {
       ncbi.2$authors <- NA
     }
+    
+    if(grepl("JOURNAL", gbank)){
+      
+      # Journal
+      journalExtract <- gsub("\\n", "", str_extract_all(gbank, "(?<=JOURNAL\\s{3})[^\n]+\\n[^\n]+")[[1]])[1]
+      journalExtract <- ifelse(grepl("(REFERENCE|PUBMED|REMARK)", journalExtract), 
+                               sub("(REFERENCE|PUBMED|REMARK).*", "", journalExtract),
+                              journalExtract)
+      
+      # journalExtract <- ifelse(grepl("REMARK", journalExtract), sub("REMARK.*", "", journalExtract), journalExtract)
+      
+      journalExtract <- gsub("\\s+", " ", journalExtract)  # Replace multiple spaces with a single space
+      journalExtract <- gsub("\\n", "", journalExtract)
+      
+      # Institution
+      institutionExtract <- gsub("\\n", "", str_extract_all(gbank, "(?<=JOURNAL\\s{3})[\\s\\S]*?(?=\\s*(COMMENT|FEATURES|REMARKS))")[[1]])
+      institutionExtract <- sub(".*JOURNAL\\s+", "", institutionExtract)
+      
+      institutionExtract <- ifelse(grepl("REMARK", institutionExtract), sub("REMARK.*", "", institutionExtract), institutionExtract)
+      
+      institutionExtract <- gsub("\\s+", " ", institutionExtract)  # Replace multiple spaces with a single space
+      institutionExtract <- gsub("\\n", "", institutionExtract)
+    
+      ncbi.2$journal <- ifelse(length(journalExtract) == 0, NA, journalExtract)
+      ncbi.2$institution <- ifelse(length(institutionExtract) == 0, NA, institutionExtract)
+      
+    } else {
+      ncbi.2$institution <- NA
+    }
+    
     
     # Create total dataset   
     ncbiInfo <- rbind(ncbiInfo, ncbi.2)
@@ -171,12 +206,6 @@ for (i in 1:length(fileList)) {
   # Save .csv
   write.csv(ncbiInfo, paste0(fileName[i], "_",Sys.Date(), ".csv"), row.names = FALSE)
   
-  
-}
+  }
 
-
-
-
-
-
-
+rm(list = ls())
