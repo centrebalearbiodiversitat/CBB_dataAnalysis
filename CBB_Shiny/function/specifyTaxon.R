@@ -8,11 +8,11 @@
 # # Functions
 # # This function return NA if the x is empty
 # ch0_to_Na <- function(x, str = NA){
-#   
+# 
 #   y <- ifelse(length(x) == 0, str, x)
-#   
+# 
 #   return(y)
-#   
+# 
 # }
 # 
 # # Load .csv
@@ -75,7 +75,9 @@ specifyTaxon <- function(x){
       # Named with more taxonomic status
       if(length(status) > 1) {
         
-        if (all(unique(colStatus.1$colStatus == "accepted"))) {
+        acc <- colStatus.1$colStatus == "accepted"
+        
+        if (all(unique(acc)) | length(which(acc == "TRUE")) > 1) {
           showNotification(paste("The taxon", sp.1, "has more then one accepted name"), 
                            type = "error",
                            duration = NULL)
@@ -168,7 +170,7 @@ specifyTaxon <- function(x){
     colList$colNames <- rbind(colList$colNames, colNames.1)
     colList$colStatus <- rbind(colList$colStatus, colStatus.1)
     
-    print(paste(i, "---- of ----", length(x)))
+    # print(paste(i, "---- of ----", length(x)))
     
     # Increment the progress bar, and update the detail text.
     incProgress(1/length(x), detail = paste("Doing:", i))
