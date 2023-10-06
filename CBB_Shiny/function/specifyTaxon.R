@@ -1,3 +1,30 @@
+#----------------------------------#
+# Specify taxonomic function (COL) #
+#----------------------------------#
+
+# # Load libraries
+# pacman::p_load(jsonlite, openxlsx ,tidyverse)
+# 
+# # Functions
+# # This function return NA if the x is empty
+# ch0_to_Na <- function(x, str = NA){
+#   
+#   y <- ifelse(length(x) == 0, str, x)
+#   
+#   return(y)
+#   
+# }
+# 
+# # Load .csv
+# # taxa <- read.csv(file = paste0(path, fileName), sep = ",")
+# taxa <- read.csv(file.choose())
+# head(taxa)
+# 
+# sp <- unique(str_trim(taxa$Taxon.name))
+# sp <- sp[1:20]
+
+
+
 # x: vector of taxa
 
 
@@ -48,7 +75,7 @@ specifyTaxon <- function(x){
       # Named with more taxonomic status
       if(length(status) > 1) {
         
-        if (unique(colStatus.1$colStatus == "accepted")) {
+        if (all(unique(colStatus.1$colStatus == "accepted"))) {
           showNotification(paste("The taxon", sp.1, "has more then one accepted name"), 
                            type = "error",
                            duration = NULL)
