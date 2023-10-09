@@ -11,14 +11,15 @@ pacman::p_load(DT, jsonlite, shiny, shinyWidgets, tidyverse, shinycssloaders)
 source("./function/cbbdbCol.R")
 source("./function/ch0_to_Na.R")
 source("./function/specifyTaxon.R")
+source("./function/wormsTaxon.R")
 
 
 #----------#
 # Start UI ---------------------------------------------------------------------
 #----------#
 
-ui <- navbarPage("CBB_ Taxonomy",
-                 
+ui <- navbarPage(title = "CBB_ Taxonomy",
+                
                  # Tab panel HOME ----------------------------------------------
                  tabPanel("Home",
                           fluidPage(sidebarLayout(
@@ -38,12 +39,12 @@ ui <- navbarPage("CBB_ Taxonomy",
                           ))), 
                  
                  
-                 # Tab panel MAPS ----------------------------------------------
+                 # Tab panel GENETICS ------------------------------------------
                  # tabPanel("Maps",
                  #          fluidPage(sidebarLayout(
-                 #            ## sidebarLayout Maps ----                           
+                 #            ## sidebarLayout Maps ----
                  #            sidebarPanel(source("Maps_sidebarPannel.R")$value),
-                 #            ## mainPanel Maps ----    
+                 #            ## mainPanel Maps ----
                  #            mainPanel(source("Maps_mainPanel.R")$value)
                  #          )
                  #          )),

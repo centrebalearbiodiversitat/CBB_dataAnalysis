@@ -23,6 +23,6 @@ HTML("<h1>CBB Taxonomy</h1>
 <br>")
 ),
 
-img(src = "logo-cbb.png", height = '40px')
+img(src = "img/logo-cbb.png", height = '40px')
 
 )

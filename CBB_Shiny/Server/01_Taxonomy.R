@@ -42,15 +42,20 @@ observeEvent(input$taxa.run.button,{
       
       spTaxa <- unique(stringr::str_trim(temp_df$df_data[,input$text.db], side = c("both")))
       
-      # Select function to retrieve taxonomy in specify format
+      # Select function to retrieve taxonomy in specify format (DB: COL)
       if(input$taxon.an == "Specify_COL") {
         temp_df.2$df_data <- specifyTaxon(spTaxa)
         temp_df.2$df_data <- temp_df.2$df_data$colNames
       }
       
-      # Select function to retrive taxonomy in CBB_DB format
+      # Select function to retrieve taxonomy in CBB_DB format (DB: COL)
       if(input$taxon.an == "CBB_DB_COL") {
         temp_df.2$df_data <- cbbdbCol(spTaxa)
+      }
+      
+      # Select function to retrieve taxonomy in Specify format (DB: WORMS)
+      if(input$taxon.an == "Specify_WORMS") {
+        temp_df.2$df_data <- specifyWorms(spTaxa)
       }
       
       

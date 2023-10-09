@@ -51,7 +51,8 @@ div(style = "display: inline-block;vertical-align:top; width: 200px;",
     
     # Select mode to analyze the taxonomy
     selectInput("taxon.an", h5("Choose taxonomy style"), 
-                choices = c("Specify_COL", "CBB_DB_COL"))
+                choices = c("Specify_COL", "CBB_DB_COL", 
+                            "Specify_WORMS"))
     ),
 
     

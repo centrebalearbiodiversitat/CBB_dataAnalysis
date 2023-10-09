@@ -2,7 +2,7 @@
 # Specify taxonomic function (COL) #
 #----------------------------------#
 
-# # Load libraries
+# Load libraries
 # pacman::p_load(jsonlite, openxlsx ,tidyverse)
 # 
 # # Functions
@@ -20,28 +20,26 @@
 # taxa <- read.csv(file.choose())
 # head(taxa)
 # 
-# sp <- unique(str_trim(taxa$Taxon.name))
+# sp <- unique(str_trim(taxa$Taxon))
 # sp <- sp[1:20]
 
 
 
 # x: vector of taxa
 
-
 specifyTaxon <- function(x){
   
   colList <- list(colNames = data.frame(),
-                  colStatus = data.frame()
-  )
+                  colStatus = data.frame())
   
-  withProgress(message = "Downloading taxonomy", value = 0,
+  # withProgress(message = "Downloading taxonomy", value = 0,
   for(i in 1:length(x)){
     
     sp.1 <- x[i]
     
     # Json query
     json.sp <- gsub(" ", "%20", sp.1)
-    json <- fromJSON(paste0("https://api.checklistbank.org/dataset/9923/nameusage/search?content=SCIENTIFIC_NAME&q=", json.sp, "&type=EXACT&offset=0&limit=10"))
+    json <- fromJSON(paste0("https://api.checklistbank.org/dataset/9923/nameusage/search?content=SCIENTIFIC_NAME&q=", json.sp, "&type=EXACT&offset=0&limit=50"))
     
     if(isTRUE(json$empty)){
       
@@ -51,6 +49,7 @@ specifyTaxon <- function(x){
       # If the taxon is not present in COL
       colNames.1 <- data.frame(originalName = sp.1,
                                colNamesAccepted = "Not found",
+                               colID = "Not found",
                                Life = "Life",
                                Kingdom = "Not found",
                                Phylum = "Not found",
@@ -75,7 +74,9 @@ specifyTaxon <- function(x){
       # Named with more taxonomic status
       if(length(status) > 1) {
         
-        acc <- colStatus.1$colStatus == "accepted"
+        # acc <- colStatus.1$colStatus == "accepted"
+        # acc <- grepl("accepted", colStatus.1$colStatus)
+        acc <- grepl("accepted", status)
         
         if (all(unique(acc)) | length(which(acc == "TRUE")) > 1) {
           showNotification(paste("The taxon", sp.1, "has more then one accepted name"), 
@@ -85,11 +86,13 @@ specifyTaxon <- function(x){
           break
         }
         
-        classification <- as.data.frame(json$result$classification[which(json$result$usage$status == "accepted")])
+        # classification <- as.data.frame(json$result$classification[which(json$result$usage$status == "accepted")])
+        classification <- as.data.frame(json$result$classification[which(json$result$usage$status == status[acc])])
         rank <- classification$rank[nrow(classification)]
         
         colNames.1 <- data.frame(originalName = sp.1,
                                  colNamesAccepted = classification$name[classification$rank == rank],
+                                 colID = json$result$id[which(json$result$usage$status == status[acc])], 
                                  Life = "Life",
                                  Kingdom = ch0_to_Na(classification$name[classification$rank == "kingdom"]),
                                  Phylum = ch0_to_Na(classification$name[classification$rank == "phylum"]),
@@ -101,7 +104,7 @@ specifyTaxon <- function(x){
                                  Genus = ch0_to_Na(classification$name[classification$rank == "genus"]),
                                  Species = ch0_to_Na(word(classification$name[classification$rank == "species"], -1)),
                                  Subspecies = ch0_to_Na(word(classification$name[classification$rank == "subspecies"], -1)),
-                                 originalStatus = json$result$usage[which(json$result$usage$status == "accepted"), ]$status,
+                                 originalStatus = json$result$usage[which(json$result$usage$status == status[acc]), ]$status,
                                  taxonRank = rank) %>%
           unique()
         
@@ -116,6 +119,7 @@ specifyTaxon <- function(x){
         
         colNames.1 <- data.frame(originalName = sp.1,
                                  colNamesAccepted = classification$name[classification$rank == rank],
+                                 colID = json$result$id,
                                  Life = "Life",
                                  Kingdom = ch0_to_Na(classification$name[classification$rank == "kingdom"]),
                                  Phylum = ch0_to_Na(classification$name[classification$rank == "phylum"]),
@@ -148,6 +152,7 @@ specifyTaxon <- function(x){
         
         colNames.1 <- data.frame(originalName = sp.1,
                                  colNamesAccepted = classification$name[classification$rank == rank],
+                                 colID = json$result$id,
                                  Life = "Life",
                                  Kingdom = ch0_to_Na(classification$name[classification$rank == "kingdom"]),
                                  Phylum = ch0_to_Na(classification$name[classification$rank == "phylum"]),
@@ -170,14 +175,16 @@ specifyTaxon <- function(x){
     colList$colNames <- rbind(colList$colNames, colNames.1)
     colList$colStatus <- rbind(colList$colStatus, colStatus.1)
     
-    # print(paste(i, "---- of ----", length(x)))
+      print(paste(i, "---- of ----", length(x)))
     
     # Increment the progress bar, and update the detail text.
-    incProgress(1/length(x), detail = paste("Doing:", i))
+    # incProgress(1/length(x), detail = paste("Doing:", i))
     
   }
-  )
+  #)
   
   return(colList)
   
 }
+
+#a <- specifyTaxon(sp)

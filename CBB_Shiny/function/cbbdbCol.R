@@ -18,7 +18,7 @@ cbbdbCol <- function(x){
     
     # Json query
     json.sp <- gsub(" ", "%20", sp.1)
-    json <- fromJSON(paste0("https://api.checklistbank.org/dataset/9923/nameusage/search?content=SCIENTIFIC_NAME&q=", json.sp, "&type=EXACT&offset=0&limit=10"))
+    json <- fromJSON(paste0("https://api.checklistbank.org/dataset/9923/nameusage/search?content=SCIENTIFIC_NAME&q=", json.sp, "&type=EXACT&offset=0&limit=50"))
     
     
     # Species not found into COL database
@@ -26,6 +26,7 @@ cbbdbCol <- function(x){
       
       colNames.1 <- data.frame(originalName = sp.1,
                                colNamesAccepted = "Not found",
+                               colID = "Not found",
                                Kingdom = "Not found",
                                kingdomAuthor = "Not found",
                                kingdomSource = taxonSource,
@@ -69,7 +70,10 @@ cbbdbCol <- function(x){
       # Named with more taxonomic status
       if(length(status) > 1) {
         
-        if (unique(colStatus.1$colStatus == "accepted")) {
+        # acc <- colStatus.1$colStatus == "accepted"
+        acc <- grepl("accepted", status)
+        
+        if (all(unique(acc)) | length(which(acc == "TRUE")) > 1) {
           showNotification(paste("The taxon", sp.1, "has more then one accepted name"), 
                            type = "error",
                            duration = NULL)
@@ -77,7 +81,7 @@ cbbdbCol <- function(x){
           break
         }
         
-        classification <- as.data.frame(json$result$classification[which(json$result$usage$status == "accepted")])
+        classification <- as.data.frame(json$result$classification[which(json$result$usage$status == status[acc])])
         rank <- classification$rank[nrow(classification)]
         
         classificationID <- classification$id[classification$rank == rank]
@@ -118,6 +122,7 @@ cbbdbCol <- function(x){
         # Dataframe to add to the main one
         colNames.1 <- data.frame(originalName = sp.1,
                                  colNamesAccepted = classification$name[classification$rank == rank],
+                                 colID = json$result$id,
                                  Kingdom = ifelse(rank == "kingdom", taxonLower, taxonHigherKingdom),
                                  kingdomAuthor = ifelse(rank == "kingdom", authorLower, authorHigherKingdom),
                                  kingdomSource = taxonSource,
@@ -151,7 +156,7 @@ cbbdbCol <- function(x){
                                  subspeciesSource = taxonSource,
                                  subspeciesOrigin = taxonOrigin,
                                  habitat = habitat,
-                                 originalStatus = ifelse(any(status %in% "accepted"), "accepted", "Many status"),
+                                 originalStatus = json$result$usage[which(json$result$usage$status == status[acc]), ]$status, #ifelse(any(status %in% "accepted"), "accepted", "Many status"),
                                  taxonRank = rank) %>% 
           unique()
         
@@ -203,6 +208,7 @@ cbbdbCol <- function(x){
         # Dataframe to add to the main one
         colNames.1 <- data.frame(originalName = sp.1,
                                  colNamesAccepted = classification$name[classification$rank == rank],
+                                 colID = json$result$id,
                                  Kingdom = ifelse(rank == "kingdom", taxonLower, taxonHigherKingdom),
                                  kingdomAuthor = ifelse(rank == "kingdom", authorLower, authorHigherKingdom),
                                  kingdomSource = taxonSource,
@@ -295,6 +301,7 @@ cbbdbCol <- function(x){
         # Dataframe to add to the main one
         colNames.1 <- data.frame(originalName = sp.1,
                                  colNamesAccepted = classification$name[classification$rank == rank],
+                                 colID = json$result$id,
                                  Kingdom = ifelse(rank == "kingdom", taxonLower, taxonHigherKingdom),
                                  kingdomAuthor = ifelse(rank == "kingdom", authorLower, authorHigherKingdom),
                                  kingdomSource = taxonSource,
