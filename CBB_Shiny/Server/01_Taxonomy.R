@@ -86,6 +86,6 @@ output$downloadData <- downloadHandler(
     paste("CBB_Taxa_dataset_", Sys.Date(), ".csv", sep = "")
   },
   content = function(file) {
-    write.csv(temp_df.2$df_data, file, row.names = FALSE)
+    write.csv(temp_df.2$df_data, file, row.names = FALSE, fileEncoding = "UTF-8")
   }
 )
