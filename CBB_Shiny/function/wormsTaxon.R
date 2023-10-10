@@ -117,10 +117,10 @@ specifyWorms <- function(x) {
                  
                  if (exists("json")) {rm(json)}
                  
-                 print(paste(i, "---- of ----", length(x)))
+                 # print(paste(i, "---- of ----", length(x)))
                  
                  # Increment the progress bar, and update the detail text.
-                 # incProgress(1/length(x), detail = paste("Doing:", i))
+                  incProgress(1/length(x), detail = paste("Doing:", i))
                }
   )
   
