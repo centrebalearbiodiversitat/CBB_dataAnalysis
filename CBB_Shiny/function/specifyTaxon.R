@@ -7,13 +7,13 @@
 # 
 # # Functions
 # # This function return NA if the x is empty
-# ch0_to_Na <- function(x, str = NA){
-# 
-#   y <- ifelse(length(x) == 0, str, x)
-# 
-#   return(y)
-# 
-# }
+ch0_to_Na <- function(x, str = ""){
+
+  y <- ifelse(length(x) == 0, str, x)
+
+  return(y)
+
+}
 # 
 # # Load .csv
 # # taxa <- read.csv(file = paste0(path, fileName), sep = ",")
@@ -50,7 +50,7 @@ specifyTaxon <- function(x){
       colNames.1 <- data.frame(originalName = sp.1,
                                colNamesAccepted = "Not found",
                                colID = "Not found",
-                               Life = "Life",
+                               Life = "Not found",
                                Kingdom = "Not found",
                                Phylum = "Not found",
                                Parvphylum = "Not found",
