@@ -59,9 +59,11 @@ cbbdbCol <- function(x){
                                subspeciesAuthor = "Not found",
                                subspeciesSource = taxonSource,
                                subspeciesOrigin = taxonOrigin,
-                               habitat = "Not found",
                                originalStatus = "Not found",
-                               taxonRank = "Not Found")
+                               taxonRank = "Not Found",
+                               freshwater = "Not Found",
+                               marine = "Not Found",
+                               terrestrial = "Not Found")
     } else {
       
       # Check name status
@@ -94,7 +96,7 @@ cbbdbCol <- function(x){
         authorLower <- ch0_to_Na(classificationLower$name$authorship)
         
         # Habitat
-        habitat <- ch0_to_Na(classificationLower$environments)
+        # habitat <- ch0_to_Na(classificationLower$environments)
         
         # Higher classification compared to the rank into the list 
         # Api COL: https://api.checklistbank.org/dataset/9923/taxon/8TN37/classification
@@ -155,9 +157,11 @@ cbbdbCol <- function(x){
                                  subspeciesAuthor = ifelse(rank == "subspecies", authorLower, authorHigherSubspecies),
                                  subspeciesSource = taxonSource,
                                  subspeciesOrigin = taxonOrigin,
-                                 habitat = habitat,
                                  originalStatus = json$result$usage[which(json$result$usage$status == status[acc]), ]$status, #ifelse(any(status %in% "accepted"), "accepted", "Many status"),
-                                 taxonRank = rank) %>% 
+                                 taxonRank = rank,
+                                 freshwater = "freshwater" %in% classificationLower$environments,
+                                 marine = "marine" %in% classificationLower$environments,
+                                 terrestrial = "terrestrial" %in% classificationLower$environments) %>% 
           unique()
         
         # any(): check if there are TRUE values in a string
@@ -180,8 +184,8 @@ cbbdbCol <- function(x){
         authorLower <- ch0_to_Na(classificationLower$name$authorship)
         
         # Habitat
-        habitat <- ch0_to_Na(classificationLower$environments)
-        
+        # habitat <- ch0_to_Na(classificationLower$environments)
+
         # Higher classification compared to the rank into the list 
         # Api COL: https://api.checklistbank.org/dataset/9923/taxon/8TN37/classification
         classificationHigher <- fromJSON(paste0("https://api.checklistbank.org/dataset/9923/taxon/", classificationID, "/classification"))
@@ -241,9 +245,11 @@ cbbdbCol <- function(x){
                                  subspeciesAuthor = ifelse(rank == "subspecies", authorLower, authorHigherSubspecies),
                                  subspeciesSource = taxonSource,
                                  subspeciesOrigin = taxonOrigin,
-                                 habitat = habitat,
                                  originalStatus = status,
-                                 taxonRank = rank) %>% 
+                                 taxonRank = rank,
+                                 freshwater = "freshwater" %in% classificationLower$environments,
+                                 marine = "marine" %in% classificationLower$environments,
+                                 terrestrial = "terrestrial" %in% classificationLower$environments) %>% 
           unique()
         
       }
@@ -273,7 +279,7 @@ cbbdbCol <- function(x){
         authorLower <- ch0_to_Na(classificationLower$name$authorship)
         
         # Habitat
-        habitat <- ch0_to_Na(classificationLower$environments)
+        # habitat <- ch0_to_Na(classificationLower$environments)
         
         # Higher classification compared to the rank into the list 
         # Api COL: https://api.checklistbank.org/dataset/9923/taxon/8TN37/classification
@@ -334,9 +340,11 @@ cbbdbCol <- function(x){
                                  subspeciesAuthor = ifelse(rank == "subspecies", authorLower, authorHigherSubspecies),
                                  subspeciesSource = taxonSource,
                                  subspeciesOrigin = taxonOrigin,
-                                 habitat = habitat,
                                  originalStatus = status,
-                                 taxonRank = rank) %>% 
+                                 taxonRank = rank,
+                                 freshwater = "freshwater" %in% classificationLower$environments,
+                                 marine = "marine" %in% classificationLower$environments,
+                                 terrestrial = "terrestrial" %in% classificationLower$environments) %>% 
           unique()
         
       }

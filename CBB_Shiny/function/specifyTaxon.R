@@ -2,18 +2,12 @@
 # Specify taxonomic function (COL) #
 #----------------------------------#
 
-# Load libraries
+# # Load libraries
 # pacman::p_load(jsonlite, openxlsx ,tidyverse)
 # 
 # # Functions
 # # This function return NA if the x is empty
-# ch0_to_Na <- function(x, str = ""){
-# 
-#   y <- ifelse(length(x) == 0, str, x)
-# 
-#   return(y)
-# 
-# }
+# source("./CBB_Shiny/function/ch0_to_Na.R")
 # 
 # # Load .csv
 # # taxa <- read.csv(file = paste0(path, fileName), sep = ",")
