@@ -1,4 +1,4 @@
-ch0_to_Na <- function(x, str = NA){
+ch0_to_Na <- function(x, str = ""){
   
   y <- ifelse(length(x) == 0, str, x)
   
