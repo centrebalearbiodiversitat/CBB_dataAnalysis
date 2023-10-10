@@ -26,7 +26,7 @@ specifyTaxon <- function(x){
   colList <- list(colNames = data.frame(),
                   colStatus = data.frame())
   
-  # withProgress(message = "Downloading taxonomy", value = 0,
+  withProgress(message = "Downloading taxonomy", value = 0,
   for(i in 1:length(x)){
     
     sp.1 <- x[i]
@@ -169,13 +169,13 @@ specifyTaxon <- function(x){
     colList$colNames <- rbind(colList$colNames, colNames.1)
     colList$colStatus <- rbind(colList$colStatus, colStatus.1)
     
-      print(paste(i, "---- of ----", length(x)))
+      # print(paste(i, "---- of ----", length(x)))
     
     # Increment the progress bar, and update the detail text.
-    # incProgress(1/length(x), detail = paste("Doing:", i))
+    incProgress(1/length(x), detail = paste("Doing:", i))
     
   }
-  #)
+)
   
   return(colList)
   

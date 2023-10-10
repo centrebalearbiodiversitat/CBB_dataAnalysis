@@ -25,8 +25,8 @@ extractTaxonWorms <- function(x) {
 #########################################
 
 specifyWorms <- function(x) {
-  colNames = data.frame()
   
+  colNames = data.frame()
   
   withProgress(message = "Downloading taxonomy", value = 0,
                for (i in 1:length(x)) {
