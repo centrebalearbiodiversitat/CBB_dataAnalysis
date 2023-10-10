@@ -42,7 +42,7 @@ specifyWorms <- function(x) {
                    colNames.1 <- data.frame(
                      originalName = sp.1,
                      colNamesAccepted = "Not found",
-                     Life = "Life",
+                     Life = "Not found",
                      Kingdom = "Not found",
                      Phylum = "Not found",
                      Class = "Not found",
@@ -52,7 +52,11 @@ specifyWorms <- function(x) {
                      Species = "Not found",
                      Subspecies = "Not found",
                      originalStatus = "Not found",
-                     taxonRank = "Not Found"
+                     taxonRank = "Not Found",
+                     brackish = "Not Found",
+                     freshwater = "Not Found",
+                     marine = "Not Found",
+                     terrestrial = "Not Found"
                    )
                  } else {
                    if (json == -999) {
@@ -70,25 +74,24 @@ specifyWorms <- function(x) {
                        Species = "Multiple matches",
                        Subspecies = "Multiple matches",
                        originalStatus = "Multiple matches",
-                       taxonRank = "Multiple matches"
-                     )
+                       taxonRank = "Multiple matches",
+                       brackish = "Multiple matches",
+                       freshwater = "Multiple matches",
+                       marine = "Multiple matches",
+                       terrestrial = "Multiple matches")
                    } else {
+                     
                      classification <- extractTaxonWorms(fromJSON(paste0("https://www.marinespecies.org/rest/AphiaClassificationByAphiaID/", json)))
                      
-                     sp.status <- gsub(" ", "%20", classification$scientificname[nrow(classification)])
-                     status <-
-                       fromJSON(
-                         paste0(
-                           "http://www.marinespecies.org/rest/AphiaRecordsByName/",
-                           sp.status,
-                           "?like=true&marine_only=false&offset=1"
-                         )
-                       )
+                     sp.statusAndHabitat <- gsub(" ", "%20", classification$scientificname[nrow(classification)])
+                     statusAndHabitat <- fromJSON(paste0("http://www.marinespecies.org/rest/AphiaRecordsByName/", sp.statusAndHabitat, "?like=true&marine_only=false&offset=1"))
+                     
+                     statusAndHabitat <- statusAndHabitat[statusAndHabitat$AphiaID == json, ]
                      
                      
                      colNames.1 <- data.frame(
                        originalName = sp.1,
-                       colNamesAccepted = status$scientificname[status$AphiaID == json],
+                       colNamesAccepted = statusAndHabitat$scientificname[statusAndHabitat$AphiaID == json],
                        Life = "Life",
                        Kingdom = ch0_to_Na(classification$scientificname[classification$rank == "Kingdom"]),
                        Phylum = ch0_to_Na(classification$scientificname[classification$rank == "Phylum"]),
@@ -98,9 +101,12 @@ specifyWorms <- function(x) {
                        Genus = ch0_to_Na(classification$scientificname[classification$rank == "Genus"]),
                        Species = ch0_to_Na(word(classification$scientificname[classification$rank == "Species"],-1)),
                        Subspecies = ch0_to_Na(word(classification$scientificname[classification$rank == "Subspecies"],-1)),
-                       originalStatus = status$status[status$AphiaID == json],
-                       taxonRank = tolower(classification$rank[nrow(classification)])
-                     ) %>%
+                       originalStatus = statusAndHabitat$status[statusAndHabitat$AphiaID == json],
+                       taxonRank = tolower(classification$rank[nrow(classification)]),
+                       brackish = statusAndHabitat$isBrackish != 0,
+                       freshwater = statusAndHabitat$isFreshwater != 0,
+                       marine = statusAndHabitat$isMarine != 0,
+                       terrestrial = statusAndHabitat$isTerrestrial != 0) %>%
                        unique()
                      
                    }
@@ -111,10 +117,10 @@ specifyWorms <- function(x) {
                  
                  if (exists("json")) {rm(json)}
                  
-                 # print(paste(i, "---- of ----", length(x)))
+                 print(paste(i, "---- of ----", length(x)))
                  
                  # Increment the progress bar, and update the detail text.
-                 incProgress(1/length(x), detail = paste("Doing:", i))
+                 # incProgress(1/length(x), detail = paste("Doing:", i))
                }
   )
   

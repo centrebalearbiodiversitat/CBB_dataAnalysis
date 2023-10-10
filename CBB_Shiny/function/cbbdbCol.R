@@ -61,6 +61,7 @@ cbbdbCol <- function(x){
                                subspeciesOrigin = taxonOrigin,
                                originalStatus = "Not found",
                                taxonRank = "Not Found",
+                               brackish = "Not Found",
                                freshwater = "Not Found",
                                marine = "Not Found",
                                terrestrial = "Not Found")
@@ -159,6 +160,7 @@ cbbdbCol <- function(x){
                                  subspeciesOrigin = taxonOrigin,
                                  originalStatus = json$result$usage[which(json$result$usage$status == status[acc]), ]$status, #ifelse(any(status %in% "accepted"), "accepted", "Many status"),
                                  taxonRank = rank,
+                                 brackish = "brackish" %in% classificationLower$environments,
                                  freshwater = "freshwater" %in% classificationLower$environments,
                                  marine = "marine" %in% classificationLower$environments,
                                  terrestrial = "terrestrial" %in% classificationLower$environments) %>% 
@@ -247,6 +249,7 @@ cbbdbCol <- function(x){
                                  subspeciesOrigin = taxonOrigin,
                                  originalStatus = status,
                                  taxonRank = rank,
+                                 brackish = "brackish" %in% classificationLower$environments,
                                  freshwater = "freshwater" %in% classificationLower$environments,
                                  marine = "marine" %in% classificationLower$environments,
                                  terrestrial = "terrestrial" %in% classificationLower$environments) %>% 
@@ -342,6 +345,7 @@ cbbdbCol <- function(x){
                                  subspeciesOrigin = taxonOrigin,
                                  originalStatus = status,
                                  taxonRank = rank,
+                                 brackish = "brackish" %in% classificationLower$environments,
                                  freshwater = "freshwater" %in% classificationLower$environments,
                                  marine = "marine" %in% classificationLower$environments,
                                  terrestrial = "terrestrial" %in% classificationLower$environments) %>% 
