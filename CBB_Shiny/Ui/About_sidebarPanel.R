@@ -3,18 +3,18 @@
 #--------------------#
 
 fluidRow(
-  
+
   #### put input area here ####
-  div(style="display: inline-block;vertical-align:top; width: 400px;",
+  div(style = "display: inline-block; vertical-align:top;",
          
-HTML("<h1>CBB Taxonomy</h1>
+HTML("<h1>CBB Taxonomy App</h1>
 <br>
 <h3>Contact</h3>
 <br>
 <i>
   <b>CBB taxonomy</b>
-</i> CBB taxonomy app is created and maintained by Tommaso Cancellario and Tomás Golomb. <br>
-<br> To comunicate bug report and feature requests please contact: <a href=\"mailto:t.cancellario@uib.eu\">T. Cancellario</a>
+</i> The <i>CBB Taxonomy App</i> is created and maintained by Tommaso Cancellario and Tomás Golomb. <br>
+<br> To comunicate bug reports and feature requests please contact: <a href=\"mailto:t.cancellario@uib.eu\">T. Cancellario</a>
      or <a href=\"mailto:t.cancellario@uib.eu\"> Tomás Golomb</a> or 
      <a href=\"mailto:a.diaz@uib.cat\"> Anna Díaz</a>
 <br>
@@ -22,7 +22,7 @@ HTML("<h1>CBB Taxonomy</h1>
 <br>
 <br>")
 ),
-
-img(src = "img/logo-cbb.png", height = '40px')
+#height = "40px"
+img(src = "img/logo-cbb.png", heigth = "100%", width = "100%")
 
 )

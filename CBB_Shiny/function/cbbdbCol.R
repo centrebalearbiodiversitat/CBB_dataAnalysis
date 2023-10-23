@@ -76,7 +76,7 @@ cbbdbCol <- function(x){
         # acc <- colStatus.1$colStatus == "accepted"
         acc <- grepl("accepted", status)
         
-        if (all(unique(acc)) | length(which(acc == "TRUE")) > 1) {
+        if (all(unique(acc)) | length(which(acc == "TRUE")) > 1 | length(which(acc == "FALSE")) > 1) {
           showNotification(paste("The taxon", sp.1, "has more then one accepted name"), 
                            type = "error",
                            duration = NULL)
@@ -363,7 +363,7 @@ cbbdbCol <- function(x){
     incProgress(1/length(x), detail = paste("Doing:", i))
     
   }
-  ) 
+   ) 
   
   return(colNames)
   
