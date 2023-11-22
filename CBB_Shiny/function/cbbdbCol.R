@@ -1,5 +1,11 @@
 # X is the vector containing the species to search.
 
+# x <- fread("~/OneDrive - Universitat de les Illes Balears/CBB objectives/CBB_DB/Taxonomy/ToCheck/thTaxa_2023_11_16.csv")
+# x <- x$originalName
+# 
+# i=93
+
+
 cbbdbCol <- function(x){
   
   colNames <- data.frame()
@@ -29,36 +35,36 @@ cbbdbCol <- function(x){
                                colID = "Not found",
                                Kingdom = "Not found",
                                kingdomAuthor = "Not found",
-                               kingdomSource = taxonSource,
-                               kingdomOrigin = taxonOrigin,
+                               kingdomSource = "Not found",
+                               kingdomOrigin = "Not found",
                                Phylum = "Not found",
                                phylumAuthor = "Not found",
-                               phylumSource = taxonSource,
-                               phylumOrigin = taxonOrigin,
+                               phylumSource = "Not found",
+                               phylumOrigin = "Not found",
                                Class = "Not found",
                                classAuthor = "Not found",
-                               classSource = taxonSource,
-                               classOrigin = taxonOrigin,
+                               classSource = "Not found",
+                               classOrigin = "Not found",
                                Order = "Not found",
                                orderAuthor = "Not found",
-                               orderSource = taxonSource,
-                               orderOrigin = taxonOrigin,
+                               orderSource = "Not found",
+                               orderOrigin = "Not found",
                                Family = "Not found",
                                familyAuthor = "Not found",
-                               familySource = taxonSource,
-                               familyOrigin = taxonOrigin,
+                               familySource = "Not found",
+                               familyOrigin = "Not found",
                                Genus = "Not found",
                                genusAuthor = "Not found",
-                               genusSource = taxonSource,
-                               genusOrigin = taxonOrigin,
+                               genusSource = "Not found",
+                               genusOrigin = "Not found",
                                Species = "Not found",
                                speciesAuthor = "Not found",
-                               speciesSource = taxonSource,
-                               speciesOrigin = taxonOrigin,
+                               speciesSource = "Not found",
+                               speciesOrigin = "Not found",
                                Subspecies = "Not found",
                                subspeciesAuthor = "Not found",
-                               subspeciesSource = taxonSource,
-                               subspeciesOrigin = taxonOrigin,
+                               subspeciesSource = "Not found",
+                               subspeciesOrigin = "Not found",
                                originalStatus = "Not found",
                                taxonRank = "Not Found",
                                brackish = "Not Found",
@@ -73,14 +79,13 @@ cbbdbCol <- function(x){
       # Named with more taxonomic status
       if(length(status) > 1) {
         
-        # acc <- colStatus.1$colStatus == "accepted"
         acc <- grepl("accepted", status)
         
         if (all(unique(acc)) | length(which(acc == "TRUE")) > 1 | length(which(acc == "FALSE")) > 1) {
-          showNotification(paste("The taxon", sp.1, "has more then one accepted name"), 
+          
+          showNotification(paste("The taxon", sp.1, "has more then one accepted name"),
                            type = "error",
                            duration = NULL)
-          # print("Houston, we have a problem...")
           break
         }
         
@@ -125,39 +130,39 @@ cbbdbCol <- function(x){
         # Dataframe to add to the main one
         colNames.1 <- data.frame(originalName = sp.1,
                                  colNamesAccepted = classification$name[classification$rank == rank],
-                                 colID = json$result$id,
+                                 colID = classificationID,
                                  Kingdom = ifelse(rank == "kingdom", taxonLower, taxonHigherKingdom),
                                  kingdomAuthor = ifelse(rank == "kingdom", authorLower, authorHigherKingdom),
-                                 kingdomSource = taxonSource,
-                                 kingdomOrigin = taxonOrigin,
+                                 kingdomSource = "",
+                                 kingdomOrigin = "",
                                  Phylum = ifelse(rank == "phylum", taxonLower, taxonHigherPhylum),
                                  phylumAuthor = ifelse(rank == "phylum", authorLower, authorHigherPhylum),
-                                 phylumSource = taxonSource,
-                                 phylumOrigin = taxonOrigin,
+                                 phylumSource = "",
+                                 phylumOrigin = "",
                                  Class = ifelse(rank == "class", taxonLower, taxonHigherClass),
                                  classAuthor = ifelse(rank == "class", authorLower, authorHigherClass),
-                                 classSource = taxonSource,
-                                 classOrigin = taxonOrigin,
+                                 classSource = "",
+                                 classOrigin = "",
                                  Order = ifelse(rank == "order", taxonLower, taxonHigherOrder),
                                  orderAuthor = ifelse(rank == "order", authorLower, authorHigherOrder),
-                                 orderSource = taxonSource,
-                                 orderOrigin = taxonOrigin,
+                                 orderSource = "",
+                                 orderOrigin = "",
                                  Family = ifelse(rank == "family", taxonLower, taxonHigherFamily),
                                  familyAuthor = ifelse(rank == "family", authorLower, authorHigherFamily),
-                                 familySource = taxonSource,
-                                 familyOrigin = taxonOrigin,
+                                 familySource = "",
+                                 familyOrigin = "",
                                  Genus = ifelse(rank == "genus", taxonLower, taxonHigherGenus),
                                  genusAuthor = ifelse(rank == "genus", authorLower, authorHigherGenus),
-                                 genusSource = taxonSource,
-                                 genusOrigin = taxonOrigin,
+                                 genusSource = "",
+                                 genusOrigin = "",
                                  Species = ifelse(rank == "species", word(taxonLower, -1), word(taxonHigherSpecies, -1)),
                                  speciesAuthor = ifelse(rank == "species", authorLower, authorHigherSpecies),
-                                 speciesSource = taxonSource,
-                                 speciesOrigin = taxonOrigin,
+                                 speciesSource = "",
+                                 speciesOrigin = "",
                                  Subspecies = ifelse(rank == "subspecies", word(taxonLower, -1), word(taxonHigherSubspecies, -1)),
                                  subspeciesAuthor = ifelse(rank == "subspecies", authorLower, authorHigherSubspecies),
-                                 subspeciesSource = taxonSource,
-                                 subspeciesOrigin = taxonOrigin,
+                                 subspeciesSource = "",
+                                 subspeciesOrigin = "",
                                  originalStatus = json$result$usage[which(json$result$usage$status == status[acc]), ]$status, #ifelse(any(status %in% "accepted"), "accepted", "Many status"),
                                  taxonRank = rank,
                                  brackish = "brackish" %in% classificationLower$environments,
@@ -166,6 +171,22 @@ cbbdbCol <- function(x){
                                  terrestrial = "terrestrial" %in% classificationLower$environments) %>% 
           unique()
         
+        colNames.1$kingdomSource <- rm_origin(colNames.1$Kingdom, taxonSource)
+        colNames.1$kingdomOrigin <- rm_origin(colNames.1$Kingdom, taxonOrigin)
+        colNames.1$phylumSource <- rm_origin(colNames.1$Phylum, taxonSource)
+        colNames.1$phylumOrigin <- rm_origin(colNames.1$Phylum, taxonOrigin)
+        colNames.1$classSource <- rm_origin(colNames.1$Class, taxonSource)
+        colNames.1$classOrigin <- rm_origin(colNames.1$Class, taxonOrigin)
+        colNames.1$orderSource <- rm_origin(colNames.1$Order, taxonSource)
+        colNames.1$orderOrigin <- rm_origin(colNames.1$Order, taxonOrigin)
+        colNames.1$familySource <- rm_origin(colNames.1$Family, taxonSource)
+        colNames.1$familyOrigin <- rm_origin(colNames.1$Family, taxonOrigin)
+        colNames.1$genusSource <- rm_origin(colNames.1$Genus, taxonSource)
+        colNames.1$genusOrigin <- rm_origin(colNames.1$Genus, taxonOrigin)
+        colNames.1$speciesSource <- rm_origin(colNames.1$Species, taxonSource)
+        colNames.1$speciesOrigin <- rm_origin(colNames.1$Species, taxonOrigin)
+        colNames.1$subspeciesSource <- rm_origin(colNames.1$Subspecies, taxonSource)
+        colNames.1$subspeciesOrigin <- rm_origin(colNames.1$Subspecies, taxonOrigin)
         # any(): check if there are TRUE values in a string
       }
       
@@ -217,36 +238,36 @@ cbbdbCol <- function(x){
                                  colID = json$result$id,
                                  Kingdom = ifelse(rank == "kingdom", taxonLower, taxonHigherKingdom),
                                  kingdomAuthor = ifelse(rank == "kingdom", authorLower, authorHigherKingdom),
-                                 kingdomSource = taxonSource,
-                                 kingdomOrigin = taxonOrigin,
+                                 kingdomSource = "",
+                                 kingdomOrigin = "",
                                  Phylum = ifelse(rank == "phylum", taxonLower, taxonHigherPhylum),
                                  phylumAuthor = ifelse(rank == "phylum", authorLower, authorHigherPhylum),
-                                 phylumSource = taxonSource,
-                                 phylumOrigin = taxonOrigin,
+                                 phylumSource = "",
+                                 phylumOrigin = "",
                                  Class = ifelse(rank == "class", taxonLower, taxonHigherClass),
                                  classAuthor = ifelse(rank == "class", authorLower, authorHigherClass),
-                                 classSource = taxonSource,
-                                 classOrigin = taxonOrigin,
+                                 classSource = "",
+                                 classOrigin = "",
                                  Order = ifelse(rank == "order", taxonLower, taxonHigherOrder),
                                  orderAuthor = ifelse(rank == "order", authorLower, authorHigherOrder),
-                                 orderSource = taxonSource,
-                                 orderOrigin = taxonOrigin,
+                                 orderSource = "",
+                                 orderOrigin = "",
                                  Family = ifelse(rank == "family", taxonLower, taxonHigherFamily),
                                  familyAuthor = ifelse(rank == "family", authorLower, authorHigherFamily),
-                                 familySource = taxonSource,
-                                 familyOrigin = taxonOrigin,
+                                 familySource = "",
+                                 familyOrigin = "",
                                  Genus = ifelse(rank == "genus", taxonLower, taxonHigherGenus),
                                  genusAuthor = ifelse(rank == "genus", authorLower, authorHigherGenus),
-                                 genusSource = taxonSource,
-                                 genusOrigin = taxonOrigin,
+                                 genusSource = "",
+                                 genusOrigin = "",
                                  Species = ifelse(rank == "species", word(taxonLower, -1), word(taxonHigherSpecies)),
                                  speciesAuthor = ifelse(rank == "species", authorLower, authorHigherSpecies),
-                                 speciesSource = taxonSource,
-                                 speciesOrigin = taxonOrigin,
+                                 speciesSource = "",
+                                 speciesOrigin = "",
                                  Subspecies = ifelse(rank == "subspecies", word(taxonLower, -1), word(taxonHigherSubspecies, -1)),
                                  subspeciesAuthor = ifelse(rank == "subspecies", authorLower, authorHigherSubspecies),
-                                 subspeciesSource = taxonSource,
-                                 subspeciesOrigin = taxonOrigin,
+                                 subspeciesSource = "",
+                                 subspeciesOrigin = "",
                                  originalStatus = status,
                                  taxonRank = rank,
                                  brackish = "brackish" %in% classificationLower$environments,
@@ -254,6 +275,23 @@ cbbdbCol <- function(x){
                                  marine = "marine" %in% classificationLower$environments,
                                  terrestrial = "terrestrial" %in% classificationLower$environments) %>% 
           unique()
+        
+        colNames.1$kingdomSource <- rm_origin(colNames.1$Kingdom, taxonSource)
+        colNames.1$kingdomOrigin <- rm_origin(colNames.1$Kingdom, taxonOrigin)
+        colNames.1$phylumSource <- rm_origin(colNames.1$Phylum, taxonSource)
+        colNames.1$phylumOrigin <- rm_origin(colNames.1$Phylum, taxonOrigin)
+        colNames.1$classSource <- rm_origin(colNames.1$Class, taxonSource)
+        colNames.1$classOrigin <- rm_origin(colNames.1$Class, taxonOrigin)
+        colNames.1$orderSource <- rm_origin(colNames.1$Order, taxonSource)
+        colNames.1$orderOrigin <- rm_origin(colNames.1$Order, taxonOrigin)
+        colNames.1$familySource <- rm_origin(colNames.1$Family, taxonSource)
+        colNames.1$familyOrigin <- rm_origin(colNames.1$Family, taxonOrigin)
+        colNames.1$genusSource <- rm_origin(colNames.1$Genus, taxonSource)
+        colNames.1$genusOrigin <- rm_origin(colNames.1$Genus, taxonOrigin)
+        colNames.1$speciesSource <- rm_origin(colNames.1$Species, taxonSource)
+        colNames.1$speciesOrigin <- rm_origin(colNames.1$Species, taxonOrigin)
+        colNames.1$subspeciesSource <- rm_origin(colNames.1$Subspecies, taxonSource)
+        colNames.1$subspeciesOrigin <- rm_origin(colNames.1$Subspecies, taxonOrigin)
         
       }
       
@@ -272,7 +310,7 @@ cbbdbCol <- function(x){
         rank <- classification$rank[nrow(classification)]
         
         # Lower classification ID
-        classificationID <- classification$id[classification$rank == rank]
+        classificationID <- classification$id[classification$rank == rank][1]
         
         # Classification rank into the list 
         # Api COL: https://api.checklistbank.org/dataset/9923/taxon/8TN37
@@ -313,36 +351,36 @@ cbbdbCol <- function(x){
                                  colID = json$result$id,
                                  Kingdom = ifelse(rank == "kingdom", taxonLower, taxonHigherKingdom),
                                  kingdomAuthor = ifelse(rank == "kingdom", authorLower, authorHigherKingdom),
-                                 kingdomSource = taxonSource,
-                                 kingdomOrigin = taxonOrigin,
+                                 kingdomSource = "",
+                                 kingdomOrigin = "",
                                  Phylum = ifelse(rank == "phylum", taxonLower, taxonHigherPhylum),
                                  phylumAuthor = ifelse(rank == "phylum", authorLower, authorHigherPhylum),
-                                 phylumSource = taxonSource,
-                                 phylumOrigin = taxonOrigin,
+                                 phylumSource = "",
+                                 phylumOrigin = "",
                                  Class = ifelse(rank == "class", taxonLower, taxonHigherClass),
                                  classAuthor = ifelse(rank == "class", authorLower, authorHigherClass),
-                                 classSource = taxonSource,
-                                 classOrigin = taxonOrigin,
+                                 classSource = "",
+                                 classOrigin = "",
                                  Order = ifelse(rank == "order", taxonLower, taxonHigherOrder),
                                  orderAuthor = ifelse(rank == "order", authorLower, authorHigherOrder),
-                                 orderSource = taxonSource,
-                                 orderOrigin = taxonOrigin,
+                                 orderSource = "",
+                                 orderOrigin = "",
                                  Family = ifelse(rank == "family", taxonLower, taxonHigherFamily),
                                  familyAuthor = ifelse(rank == "family", authorLower, authorHigherFamily),
-                                 familySource = taxonSource,
-                                 familyOrigin = taxonOrigin,
+                                 familySource = "",
+                                 familyOrigin = "",
                                  Genus = ifelse(rank == "genus", taxonLower, taxonHigherGenus),
                                  genusAuthor = ifelse(rank == "genus", authorLower, authorHigherGenus),
-                                 genusSource = taxonSource,
-                                 genusOrigin = taxonOrigin,
+                                 genusSource = "",
+                                 genusOrigin = "",
                                  Species = ifelse(rank == "species", word(taxonLower, -1), word(taxonHigherSpecies, -1)),
                                  speciesAuthor = ifelse(rank == "species", authorLower, authorHigherSpecies),
-                                 speciesSource = taxonSource,
-                                 speciesOrigin = taxonOrigin,
+                                 speciesSource = "",
+                                 speciesOrigin = "",
                                  Subspecies = ifelse(rank == "subspecies", word(taxonLower, -1), word(taxonHigherSubspecies, -1)),
                                  subspeciesAuthor = ifelse(rank == "subspecies", authorLower, authorHigherSubspecies),
-                                 subspeciesSource = taxonSource,
-                                 subspeciesOrigin = taxonOrigin,
+                                 subspeciesSource = "",
+                                 subspeciesOrigin = "",
                                  originalStatus = status,
                                  taxonRank = rank,
                                  brackish = "brackish" %in% classificationLower$environments,
@@ -351,6 +389,22 @@ cbbdbCol <- function(x){
                                  terrestrial = "terrestrial" %in% classificationLower$environments) %>% 
           unique()
         
+        colNames.1$kingdomSource <- rm_origin(colNames.1$Kingdom, taxonSource)
+        colNames.1$kingdomOrigin <- rm_origin(colNames.1$Kingdom, taxonOrigin)
+        colNames.1$phylumSource <- rm_origin(colNames.1$Phylum, taxonSource)
+        colNames.1$phylumOrigin <- rm_origin(colNames.1$Phylum, taxonOrigin)
+        colNames.1$classSource <- rm_origin(colNames.1$Class, taxonSource)
+        colNames.1$classOrigin <- rm_origin(colNames.1$Class, taxonOrigin)
+        colNames.1$orderSource <- rm_origin(colNames.1$Order, taxonSource)
+        colNames.1$orderOrigin <- rm_origin(colNames.1$Order, taxonOrigin)
+        colNames.1$familySource <- rm_origin(colNames.1$Family, taxonSource)
+        colNames.1$familyOrigin <- rm_origin(colNames.1$Family, taxonOrigin)
+        colNames.1$genusSource <- rm_origin(colNames.1$Genus, taxonSource)
+        colNames.1$genusOrigin <- rm_origin(colNames.1$Genus, taxonOrigin)
+        colNames.1$speciesSource <- rm_origin(colNames.1$Species, taxonSource)
+        colNames.1$speciesOrigin <- rm_origin(colNames.1$Species, taxonOrigin)
+        colNames.1$subspeciesSource <- rm_origin(colNames.1$Subspecies, taxonSource)
+        colNames.1$subspeciesOrigin <- rm_origin(colNames.1$Subspecies, taxonOrigin)
       }
       
     }

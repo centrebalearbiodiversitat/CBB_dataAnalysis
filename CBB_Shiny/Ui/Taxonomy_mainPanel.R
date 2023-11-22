@@ -3,8 +3,9 @@
 #--------------------#
 
 fluidRow(
-  h2("CBB Taxonomy"),
+  # h2("CBB Taxonomy"),
   DT::dataTableOutput("inputDataframe"),
+  # fileInputWithResetButtonUI("fileModule1"),
   br(),
-  uiOutput("modify")
+  dataTableOutput("dataTaxonomy") %>% withSpinner()
 )

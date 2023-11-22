@@ -25,8 +25,7 @@ div(style="display: inline-block;vertical-align:top; width: 400px;",
     # Select the habitat of the taxon to remove occurrence outside the selected
     # habitat
     selectInput("habitat.gbif", h5("Choose the taxon Habitat"), 
-                choices = c("Freshwater" = "fw", "Marine" = "mar", 
-                            "Terrestrial" = "ter"))
+                choices = c("Freshwater/Terrestrial" = "fw", "Marine" = "mar"))
     ),
 
 hr(),

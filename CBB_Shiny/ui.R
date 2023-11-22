@@ -3,8 +3,9 @@
 #-------------------------------#
 
 # Load libraries
-pacman::p_load(DT, jsonlite, leaflet, shiny, shinyWidgets, tidyverse, 
-               shinycssloaders, rgbif, shinydashboard, sf, red, biomonitoR)
+pacman::p_load(data.table, DT, jsonlite, leaflet, shiny, shinyWidgets, tidyverse, 
+               shinycssloaders, rgbif, shinydashboard, sf, red, biomonitoR,
+               vegan, openxlsx, shinyjs, shinydashboardPlus)
 
 #----------#
 # Function ---------------------------------------------------------------------
@@ -24,7 +25,7 @@ ui <- navbarPage(title = "CBB_ Taxonomy",
                  # Tab panel HOME ----------------------------------------------
                  tabPanel("Home",
                           fluidPage(sidebarLayout(
-                            # Side panel About ---- 
+                            # Side panel About ----
                             sidebarPanel(source("./Ui/About_sidebarPanel.R")$value),
                             # Main panel About ----
                             mainPanel(source("./Ui/About_mainPanel.R")$value)
@@ -54,31 +55,36 @@ ui <- navbarPage(title = "CBB_ Taxonomy",
                             )
                           ),
                  
-                 # Tab panel RLI -----------------------------------------------
+                 # Tab panel biomonitoR ----------------------------------------
                  tabPanel("biomonitoR",
                           fluidPage(sidebarLayout(
                             ## sidebarLayout Maps ----
-                            sidebarPanel(source("./Ui/RLI_sidebarPanel.R")$value),
+                            sidebarPanel(source("./Ui/biomonitoR_sidebarPanel.R")$value),
                             ## mainPanel Maps ----
-                            mainPanel(source("./Ui/RLI_mainPanel.R")$value)
+                            mainPanel(source("./Ui/biomonitoR_mainPanel.R")$value)
                           )
                           )
                  ),
                  
                  
-                 # Tab panel GENETICS ------------------------------------------
-                 # tabPanel("Maps",
+                 # Tab panel TREE ----------------------------------------------
+                 # tabPanel("TP Tree",
                  #          fluidPage(sidebarLayout(
-                 #            ## sidebarLayout Maps ----
-                 #            sidebarPanel(source("Maps_sidebarPannel.R")$value),
-                 #            ## mainPanel Maps ----
-                 #            mainPanel(source("Maps_mainPanel.R")$value)
+                 #            ## sidebarLayout Tree ----
+                 #            sidebarPanel(source("./Ui/Tree_sidebarPanel.R")$value),
+                 #            ## mainPanel Tree ----
+                 #            mainPanel(source("./Ui/Tree_mainPanel.R")$value)
                  #          )
-                 #          )),
-                 # 
+                 #          )
+                 # ),
+
                  
                  
                  # Tab panel HELP ----------------------------------------------
                  navbarMenu("Help",
-                            tabPanel("Taxonomy"))
+                            tabPanel("Taxonomy"),
+                            tabPanel("Maps"),
+                            tabPanel("biomonitoR")
+                            #tabPanel("Tree")
+                            )
 )
